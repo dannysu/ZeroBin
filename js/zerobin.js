@@ -75,7 +75,7 @@ function scriptLocation() {
  * @return the storage URL
  */
 function storageLocation(id) {
-    return "http://[your own subdomain].appspot.com/zerobin_"+id;
+    return "http://amzns3.appspot.com/zerobin_"+id;
 }
 
 /**
