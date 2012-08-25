@@ -240,7 +240,14 @@ function send_data() {
         return;
     }
     showStatus('Sending paste...', spin=true);
+    var use_custom_key = false;
+    if ($('input#custom_key').val().length > 0) {
+        use_custom_key = true;
+    }
     var randomkey = sjcl.codec.base64.fromBits(sjcl.random.randomWords(8, 0), 0);
+    if (use_custom_key) {
+        randomkey = $('input#custom_key').val() + "=";
+    }
     var cipherdata = zeroCipher(randomkey, $('textarea#message').val());
     var data_to_send = { data:           cipherdata,
                          expire:         $('select#pasteExpiration').val(),
@@ -253,7 +260,10 @@ function send_data() {
         .success(function(data) {
             if (data.status == 0) {
                 stateExistingPaste();
-                var url = scriptLocation() + "?" + data.id + '#' + randomkey;
+                var url = scriptLocation() + "?" + data.id;
+                if (!use_custom_key) {
+                    url += '#' + randomkey;
+                }
                 showStatus('');
                 $('div#pastelink').html('Your paste is <a href="' + url + '">' + url + '</a>').show();
                 setElementText($('div#cleartext'), $('textarea#message').val());
@@ -287,6 +297,7 @@ function stateNewPaste() {
     $('div#cleartext').hide();
     $('div#message').focus();
     $('div#discussion').hide();
+    $('input#custom_key').show();
 }
 
 /**
@@ -311,6 +322,7 @@ function stateExistingPaste() {
     $('div#pastelink').hide();
     $('textarea#message').hide();
     $('div#cleartext').show();
+    $('input#custom_key').hide();
 }
 
 /**
